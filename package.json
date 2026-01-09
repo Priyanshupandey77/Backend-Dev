@@ -1,0 +1,24 @@
+{
+  "name": "production-setup",
+  "version": "1.0.0",
+  "description": "a backend learning session from chai aur code",
+  "license": "ISC",
+  "author": "Priyanshu Pandey",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "mongoose": "^9.1.2"
+  }
+}
