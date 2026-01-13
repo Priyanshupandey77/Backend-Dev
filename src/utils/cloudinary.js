@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 
@@ -8,19 +10,26 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
-    //upload the file on cloudinary
+
     const response = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
     });
-    // file has been uploaded successfully
-    console.log("file is uploaded on cloudinary", response.url);
+
+    console.log("Cloudinary upload success:", response.secure_url);
+    fs.unlinkSync(localFilePath); // cleanup AFTER success
     return response;
+
   } catch (error) {
-    fs.unlinkSync(localFilePath); //remove the locally saved temporary file as the upload operation got failed
-    return null;
+    console.error("Cloudinary upload error:", error.message);
+    console.error(error); // VERY IMPORTANT
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+    throw error; //  DO NOT RETURN NULL
   }
 };
 
