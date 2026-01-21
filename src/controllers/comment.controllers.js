@@ -2,7 +2,7 @@ import { isValidObjectId } from "mongoose";
 import { Comment } from "../models/comment.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js"; 
 import { Video } from "../models/video.models.js";
 
 const getVideoComments = asyncHandler(async (req, res) => {
@@ -96,7 +96,7 @@ const addComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
-  let { newComment } = req.body;
+  const { newComment } = req.body || {};
   // TODO: update a comment
 
   //steps

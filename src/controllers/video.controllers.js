@@ -93,11 +93,25 @@ const publishAVideo = asyncHandler(async (req, res) => {
   //upload video to cloudinary and handle upload  failure
   // create a video document in db with owner=req.user._id
   //return success response with video data
+  if (!req.user) {
+    throw new ApiError(400, "user not authenticated");
+  }
 
   if (!(title && description)) {
     throw new ApiError(400, "Title and description missing");
   }
-  const videoLocalPath = req.files?.video[0]?.path;
+
+const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path;
+
+if (!thumbnailLocalPath) {
+  throw new ApiError(400, "thumbnail file not found");
+}
+const thumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+if (!thumbnail) {
+  throw new ApiError(500, "thumbnail not uploaded");
+}
+
+const videoLocalPath = req.files?.videoFile?.[0]?.path;
   if (!videoLocalPath) {
     throw new ApiError(400, "video file not found");
   }
@@ -105,15 +119,13 @@ const publishAVideo = asyncHandler(async (req, res) => {
   const video = await uploadOnCloudinary(videoLocalPath);
 
   if (!video) {
-    throw new ApiError(500, "video not uploaded");
-  }
-
-  if (!req.user) {
-    throw new ApiError(401, "user not authenticated");
+    throw new ApiError(500, "video upload failed");
   }
 
   const videodocs = await Video.create({
     videoFile: video.url,
+    thumbnail: thumbnail.url,
+    duration: video.duration,
     title,
     description,
     owner: req.user._id,

@@ -6,7 +6,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.models.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
-  const { videoId } = req.params;
+  const { videoId } = req.params; 
   //TODO: toggle like on video
 
   //steps

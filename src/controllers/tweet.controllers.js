@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-import { Tweet } from "../models/tweet.models.js";
+import { Tweet } from "../models/tweet.models.js"; 
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -58,7 +58,7 @@ const getUserTweets = asyncHandler(async (req, res) => {
 
 const updateTweet = asyncHandler(async (req, res) => {
   const { tweetId } = req.params;
-  const { newContent } = req.body;
+  let { newContent } = req.body;
   //TODO: update tweet
 
   //steps

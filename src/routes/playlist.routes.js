@@ -1,19 +1,30 @@
-import { Router } from "express";
+import { Router } from 'express';
 import {
-  getSubscribedChannels,
-  getUserChannelSubscribers,
-  toggleSubscription,
-} from "../controllers/subscription.controllers.js";
-import { verifyJWT } from "../middlewares/auth.middlewares.js";
+    addVideoToPlaylist,
+    createPlaylist,
+    deletePlaylist,
+    getPlaylistById,
+    getUserPlaylists,
+    removeVideoFromPlaylist,
+    updatePlaylist,
+} from "../controllers/playlist.controllers.js"
+import { verifyJWT } from '../middlewares/auth.middlewares.js';
 
 const router = Router();
-router.use(verifyJWT); //Apply verifyJWT middleware to all routes in this file
+
+router.use(verifyJWT); // Apply verifyJWT middleware to all routes in this file
+
+router.route("/").post(createPlaylist)
 
 router
-  .route("/c/:channelId")
-  .get(getSubscribedChannels)
-  .post(toggleSubscription);
+    .route("/:playlistId")
+    .get(getPlaylistById)
+    .patch(updatePlaylist)
+    .delete(deletePlaylist);
 
-router.route("/u/:subscriberId").get(getUserChannelSubscribers);
+router.route("/add/:videoId/:playlistId").patch(addVideoToPlaylist);
+router.route("/remove/:videoId/:playlistId").patch(removeVideoFromPlaylist);
 
-export default router;
+router.route("/user/:userId").get(getUserPlaylists);
+
+export default router

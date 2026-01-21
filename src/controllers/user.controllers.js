@@ -250,7 +250,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
-      $set: { 
+      $set: {
         fullName,
         email,
       },
@@ -331,7 +331,10 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
   const channel = await User.aggregate([
     {
       $match: {
-        username: username?.toLowerCase(),
+        username: {
+          $regex: `^${username}$`,
+          $options: "i",
+        },
       },
     },
     {
@@ -350,6 +353,23 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         as: "subscribedTo",
       },
     },
+    // {
+    //   $addFields: {
+    //     subscribersCount: {
+    //       $size: "$subscribers",
+    //     },
+    //     channelsSubscribedToCount: {
+    //       $size: "$subscribedTo",
+    //     },
+    //     isSubscribed: {
+    //       $cond: {
+    //         if: { $in: [req.user?._id, "subscribers.subscriber"] },
+    //         then: true,
+    //         else: false,
+    //       },
+    //     },
+    //   },
+    // },
     {
       $addFields: {
         subscribersCount: {
@@ -360,7 +380,18 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
         isSubscribed: {
           $cond: {
-            if: { $in: [req.user?._id, "subscribers.subscriber"] },
+            if: {
+              $in: [
+                req.user?._id,
+                {
+                  $map: {
+                    input: "$subscribers",
+                    as: "sub",
+                    in: "$$sub.subscriber",
+                  },
+                },
+              ],
+            },
             then: true,
             else: false,
           },
